@@ -2,7 +2,10 @@ package com.pradeep.spring_security.controller;
 
 import com.pradeep.spring_security.models.JwtRequest;
 import com.pradeep.spring_security.models.JwtResponse;
+import com.pradeep.spring_security.models.User;
+import com.pradeep.spring_security.repository.UserRepository;
 import com.pradeep.spring_security.security.JwtHelper;
+import com.pradeep.spring_security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +24,18 @@ public class AuthController {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private AuthenticationManager manager;
-
-
     @Autowired
     private JwtHelper helper;
-
     private Logger logger = LoggerFactory.getLogger(AuthController.class);
-
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
-
         this.doAuthenticate(request.getEmail(), request.getPassword());
-
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = this.helper.generateToken(userDetails);
 
@@ -61,6 +59,13 @@ public class AuthController {
     @ExceptionHandler(BadCredentialsException.class)
     public String exceptionHandler() {
         return "Credentials Invalid !!";
+    }
+
+
+    @PostMapping("/create-user")
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user);
+
     }
 
 }
