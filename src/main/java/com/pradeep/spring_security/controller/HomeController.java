@@ -32,4 +32,9 @@ public class HomeController {
         return principal.getName();
     }
 
+    @GetMapping
+    public String getHomePage(Principal principal){
+        return "This is our website Home page!";
+    }
+
 }
